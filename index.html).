@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovelVerse - Read & Publish Webnovels</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex flex-wrap justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="showSection('reader-view')">
+            <i class="fa-solid fa-book-open text-indigo-500 text-2xl"></i>
+            <span class="text-xl font-bold text-white">Novel<span class="text-indigo-500">Verse</span></span>
+        </div>
+        
+        <div class="flex gap-4 text-sm font-medium">
+            <button onclick="showSection('reader-view')" class="hover:text-indigo-400 transition">Home</button>
+            <button onclick="showSection('publish-view')" class="hover:text-indigo-400 transition"><i class="fa-solid fa-pen-nib mr-1"></i> Publish Novel</button>
+            <button onclick="showSection('dashboard-view')" class="hover:text-indigo-400 transition"><i class="fa-solid fa-chart-line mr-1"></i> Author Dashboard</button>
+        </div>
+
+        <div class="flex items-center gap-3 mt-2 sm:mt-0">
+            <span id="wallet-badge" class="bg-emerald-500/20 text-emerald-400 text-xs px-3 py-1 rounded-full border border-emerald-500/30 font-semibold">
+                Balance: ₹0
+            </span>
+            <button onclick="addMoney()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">
+                + Add Money
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN BODY CONTAINER -->
+    <main class="max-w-5xl mx-auto w-full p-6 flex-1">
+
+        <!-- SECTION 1: MAIN READER PAGE -->
+        <section id="reader-view" class="space-y-8">
+            
+            <!-- Novel Header Info -->
+            <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 flex flex-col md:flex-row gap-6">
+                <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&q=80" class="w-32 h-44 object-cover rounded-xl border border-slate-600">
+                <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h1 class="text-2xl font-bold text-white">Shadow Sovereign</h1>
+                            <p class="text-xs text-indigo-400 mt-1 cursor-pointer" onclick="showSection('author-profile')">By AuthorX (View Profile)</p>
+                        </div>
+                        <div class="flex gap-2 flex-wrap justify-end">
+                            <span class="bg-indigo-500/10 text-indigo-400 text-xs px-2.5 py-1 rounded border border-indigo-500/20">Original</span>
+                            <span class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded border border-emerald-500/20">Fantasy</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-300 text-sm mt-3">A young hunter gains an ancient shadowy system power to battle underground monsters...</p>
+                    
+                    <div class="flex items-center gap-4 mt-4 flex-wrap">
+                        <div class="flex items-center gap-6 text-xs text-slate-300 bg-slate-900/50 p-3 rounded-lg w-fit">
+                            <div><i class="fa-solid fa-eye text-indigo-400 mr-1"></i> 12.4K Views</div>
+                            <div><i class="fa-solid fa-star text-amber-400 mr-1"></i> 4.9 Rating</div>
+                        </div>
+
+                        <button onclick="resumeReading()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-3 rounded-lg transition flex items-center gap-2">
+                            <i class="fa-solid fa-play"></i> <span id="continue-reading-text">Continue Reading (Ch 1)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chapter Selection Grid -->
+            <div>
+                <h3 class="text-lg font-bold text-white mb-3">Chapters (Ch 1-20 Free | Ch 21+ ₹8 per unlock)</h3>
+                <div id="chapter-list" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+            </div>
+
+            <!-- Chapter Content Reading Screen -->
+            <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 relative min-h-[300px] transition-all duration-300" id="reader-box">
+                
+                <div class="flex justify-between items-center border-b border-slate-700/60 pb-3 mb-4">
+                    <span id="chapter-title" class="text-lg font-bold text-indigo-400">Select a chapter</span>
+                    
+                    <div class="flex items-center gap-3 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-700 text-xs">
+                        <span class="text-slate-400 font-semibold">Font:</span>
+                        <button onclick="changeFontSize('small')" class="px-2 py-0.5 rounded bg-slate-800 text-white">A-</button>
+                        <button onclick="changeFontSize('medium')" class="px-2 py-0.5 rounded bg-slate-800 text-white font-bold">A</button>
+                        <button onclick="changeFontSize('large')" class="px-2 py-0.5 rounded bg-slate-800 text-white text-sm font-bold">A+</button>
+                    </div>
+                </div>
+
+                <div id="chapter-content" class="text-slate-300 leading-relaxed space-y-4 text-base p-2 transition-all"></div>
+
+                <div id="author-notes-box" class="mt-8 p-4 bg-slate-900/80 rounded-xl border border-indigo-500/30 text-xs">
+                    <div class="flex items-center gap-2 font-bold text-indigo-400 mb-1">
+                        <i class="fa-solid fa-bullhorn"></i> Author's Thoughts
+                    </div>
+                    <p id="author-note-text" class="text-slate-400 italic">"Thanks for reading! Drop your thoughts in the comments."</p>
+                </div>
+
+                <!-- Paywall Overlay (₹8 Per Chapter Unlock) -->
+                <div id="paywall-overlay" class="hidden absolute inset-0 bg-slate-900/95 rounded-2xl flex flex-col items-center justify-center text-center p-6 border border-amber-500/30">
+                    <i class="fa-solid fa-lock text-amber-400 text-3xl mb-3"></i>
+                    <h3 class="text-xl font-bold text-white">Locked Chapter</h3>
+                    <p class="text-slate-400 text-sm max-w-md my-2">Unlock this chapter permanently for just <span class="text-amber-400 font-bold">₹8</span> (Author gets ₹6, Platform gets ₹2).</p>
+                    <button onclick="unlockCurrentChapter()" class="bg-amber-600 hover:bg-amber-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition">
+                        Unlock Chapter for ₹8
+                    </button>
+                </div>
+            </div>
+
+            <!-- Reader Comments Section -->
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 space-y-4">
+                <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-comments text-indigo-400 mr-2"></i>Reader Comments</h3>
+                <div class="flex gap-2">
+                    <input type="text" id="comment-input" placeholder="Write a comment..." class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm flex-1 text-white">
+                    <button onclick="addComment()" class="bg-indigo-600 text-white px-5 py-2 rounded-xl text-sm font-semibold">Post</button>
+                </div>
+                <div id="comments-container" class="space-y-3 pt-2">
+                    <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 text-xs">
+                        <span class="font-bold text-indigo-400">ReaderOne:</span> Amazing chapter! 🔥
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PUBLISH SECTION -->
+        <section id="publish-view" class="hidden bg-slate-800 p-6 rounded-2xl border border-slate-700 space-y-4 max-w-2xl mx-auto">
+            <h2 class="text-xl font-bold text-white border-b border-slate-700 pb-3">Publish New Chapter</h2>
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Chapter Title</label>
+                <input type="text" placeholder="e.g. Chapter 21" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">Chapter Content</label>
+                <textarea rows="6" placeholder="Write your chapter text..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white leading-relaxed"></textarea>
+            </div>
+            <button onclick="alert('Chapter Published Successfully!')" class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl">Publish Chapter</button>
+        </section>
+
+        <!-- AUTHOR & PLATFORM DASHBOARD -->
+        <section id="dashboard-view" class="hidden space-y-6">
+            <h2 class="text-xl font-bold text-white"><i class="fa-solid fa-chart-pie text-indigo-400 mr-2"></i>Revenue & Earnings Dashboard</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
+                    <p class="text-xs text-slate-400">Total Unlocks</p>
+                    <h3 id="stat-unlocks" class="text-2xl font-bold text-white mt-1">0 Chapters</h3>
+                </div>
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
+                    <p class="text-xs text-slate-400">Author Earnings (₹6 / unlock)</p>
+                    <h3 id="stat-author-earn" class="text-2xl font-bold text-emerald-400 mt-1">₹0</h3>
+                </div>
+                <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
+                    <p class="text-xs text-slate-400">Platform Share (₹2 / unlock)</p>
+                    <h3 id="stat-platform-earn" class="text-2xl font-bold text-indigo-400 mt-1">₹0</h3>
+                </div>
+            </div>
+        </section>
+
+        <section id="author-profile" class="hidden bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-xl mx-auto">
+            <h2 class="text-xl font-bold text-white">Author Profile: AuthorX</h2>
+            <p class="text-xs text-slate-300 mt-2 font-medium">Dark fantasy and progression sci-fi writer.</p>
+        </section>
+    </main>
+
+    <script>
+        let readerBalance = parseInt(localStorage.getItem('readerBalance')) || 0;
+        let unlockedChapters = JSON.parse(localStorage.getItem('unlockedChapters')) || [];
+        let totalUnlocksCount = parseInt(localStorage.getItem('totalUnlocksCount')) || 0;
+        let lastReadChapter = parseInt(localStorage.getItem('lastReadChapter')) || 1;
+
+        function showSection(sectionId) {
+            ['reader-view', 'publish-view', 'dashboard-view', 'author-profile'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+            updateDashboard();
+        }
+
+        function addMoney() {
+            readerBalance += 50; // Add ₹50 mock balance for testing
+            localStorage.setItem('readerBalance', readerBalance);
+            updateWalletUI();
+            alert('Successfully added ₹50 to your reader wallet!');
+            loadChapter(lastReadChapter);
+        }
+
+        function updateWalletUI() {
+            document.getElementById('wallet-badge').innerText = `Balance: ₹${readerBalance}`;
+        }
+
+        function initChapters() {
+            const list = document.getElementById('chapter-list');
+            list.innerHTML = '';
+            for (let i = 1; i <= 25; i++) {
+                const isLocked = i > 20 && !unlockedChapters.includes(i);
+                list.innerHTML += `
+                    <button onclick="loadChapter(${i})" class="p-3 rounded-xl border text-xs font-medium flex justify-between items-center ${isLocked ? 'border-amber-500/30 bg-amber-500/5 text-amber-300' : 'border-slate-700 bg-slate-800 text-slate-200'}">
+                        <span>Ch ${i}</span>
+                        ${isLocked ? '<i class="fa-solid fa-lock text-amber-400"></i>' : ''}
+                    </button>
+                `;
+            }
+            updateContinueReadingUI();
+            updateWalletUI();
+        }
+
+        function loadChapter(num) {
+            const paywall = document.getElementById('paywall-overlay');
+            document.getElementById('chapter-title').innerText = `Chapter ${num}`;
+
+            const isLocked = num > 20 && !unlockedChapters.includes(num);
+
+            if (isLocked) {
+                paywall.classList.remove('hidden');
+            } else {
+                paywall.classList.add('hidden');
+                document.getElementById('chapter-content').innerHTML = `<p>This is Chapter ${num} story text. The battle reaches its peak as dark powers collide...</p>`;
+                
+                lastReadChapter = num;
+                localStorage.setItem('lastReadChapter', num);
+                updateContinueReadingUI();
+            }
+        }
+
+        function unlockCurrentChapter() {
+            if (readerBalance >= 8) {
+                readerBalance -= 8;
+                totalUnlocksCount += 1;
+                unlockedChapters.push(lastReadChapter);
+
+                localStorage.setItem('readerBalance', readerBalance);
+                localStorage.setItem('totalUnlocksCount', totalUnlocksCount);
+                localStorage.setItem('unlockedChapters', JSON.stringify(unlockedChapters));
+
+                updateWalletUI();
+                initChapters();
+                loadChapter(lastReadChapter);
+                alert('Chapter unlocked successfully!');
+            } else {
+                alert('Low Balance! Click on "+ Add Money" top right to add funds to your wallet.');
+            }
+        }
+
+        function updateDashboard() {
+            document.getElementById('stat-unlocks').innerText = `${totalUnlocksCount} Chapters`;
+            document.getElementById('stat-author-earn').innerText = `₹${totalUnlocksCount * 6}`;
+            document.getElementById('stat-platform-earn').innerText = `₹${totalUnlocksCount * 2}`;
+        }
+
+        function updateContinueReadingUI() {
+            document.getElementById('continue-reading-text').innerText = `Continue Reading (Ch ${lastReadChapter})`;
+        }
+
+        function resumeReading() {
+            loadChapter(lastReadChapter);
+            document.getElementById('reader-box').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function changeFontSize(size) {
+            const content = document.getElementById('chapter-content');
+            content.classList.remove('text-sm', 'text-base', 'text-xl');
+            if(size === 'small') content.classList.add('text-sm');
+            if(size === 'medium') content.classList.add('text-base');
+            if(size === 'large') content.classList.add('text-xl');
+        }
+
+        function addComment() {
+            const input = document.getElementById('comment-input');
+            if (!input.value.trim()) return;
+            const container = document.getElementById('comments-container');
+            container.innerHTML += `
+                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 text-xs">
+                    <span class="font-bold text-indigo-400">You:</span> ${input.value}
+                </div>
+            `;
+            input.value = '';
+        }
+
+        initChapters();
+        loadChapter(lastReadChapter);
+    </script>
+</body>
+</html>
